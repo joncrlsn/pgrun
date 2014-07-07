@@ -27,7 +27,7 @@ func main() {
 	dbInfo.Populate()
 
 	if len(fileName) == 0 {
-        fmt.Println("Missing required filename argument (-f)")
+        fmt.Fprintln(os.Stderr, "Missing required filename argument (-f)")
 		usage()
 	}
 
@@ -51,13 +51,13 @@ func runFile(fileName string, dbInfo *pgutil.DbInfo) {
 	for sql := range sqlChan {
 		// Execute SQL.  If not successful, stop and ask user
 		// whether or not we should continue
-		fmt.Println("================================")
-		fmt.Println("Executing SQL: ", sql)
-        result, err := db.Exec(sql)  
+		fmt.Println("\n================================")
+		log.Print("Executing SQL: ", sql)
+        result, err := db.Exec(sql)
 
         // If there was an error, ask user whether or not we should continue
 		if err != nil {
-            log.Println("Error:", err) 
+            fmt.Fprintln(os.Stderr, "Error: ", err)
             if misc.PromptYesNo("SQL failed!  Do you want to continue?", false)  {
                 continue
             }
@@ -66,9 +66,9 @@ func runFile(fileName string, dbInfo *pgutil.DbInfo) {
 
         rowCnt, err := result.RowsAffected()
         check("getting rows affected count", err)
-        fmt.Printf("Rows affected: %d\n", rowCnt)
+        log.Printf("Rows affected: %d\n", rowCnt)
 	}
-    fmt.Println("Done!")
+    log.Println("Done!")
 }
 
 /*
@@ -87,7 +87,11 @@ func sqlStatements(fileName string) <-chan string {
 			//fmt.Printf("  Line: %s\n", line)
 
 			// ignore blank or empty lines
-			if len(strings.TrimSpace(line)) == 0 {
+			line = strings.TrimSpace(line)
+			if len(line) == 0 {
+				continue
+			}
+			if strings.HasPrefix(line, "--") {
 				continue
 			}
 
@@ -128,7 +132,7 @@ Program flags are:
   -h     : host name where database is running--default is localhost (matches psql flag)
   -p     : port.  defaults to 5432 (matches psql flag)
   -d     : database name (matches psql flag)
-  -pw    : password for the user`)
+  -pw    : password for the postgres user`)
 	os.Exit(2)
 }
 
