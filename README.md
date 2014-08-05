@@ -1,7 +1,7 @@
 pgrun
 =====
 
-Executes each statement in a SQL file against a PostgreSQL database, stopping when any statement has an error.Contrast this behavior with the standard PostgreSQL psql executable which takes a -f argument, but continues to run even after a command fails.
+Written in GoLang. Executes each statement in a SQL file against a PostgreSQL database, stopping when any statement has an error.Contrast this behavior with the standard PostgreSQL psql executable which takes a -f argument, but continues to run even after a command fails.
 
 Database connection properties can be specified in two ways:
   * Environment variables
