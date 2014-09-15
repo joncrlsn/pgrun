@@ -13,11 +13,11 @@ Database connection properties can be specified in two ways:
 If you have a ~/.pgpass file, pgrun will attempt to pull password from there.
 
 Environment variables are:
-  * DBHOST : host name where database is running (default is localhost)
-  * DBPORT : port database is listening on (default is 5432)
-  * DBNAME : database you want to update
-  * DBUSER : user in postgres you'll be executing the commands as
-  * DBPASS : password for the user
+  * PGHOST     : host name where database is running (default is localhost)
+  * PGPORT     : port database is listening on (default is 5432)
+  * PGDATABASE : database you want to update
+  * DBUSER     : user in postgres you'll be executing the commands as
+  * DBPASSWORD : password for the user
 
 Program flags (these match the psql arguments):
   * -f  : (required) file path to the SQL to run

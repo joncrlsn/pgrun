@@ -120,11 +120,11 @@ Database connection properties can be specified in two ways:
   * ~/.pgpass file (for the password)
 
 Environment variables are:
-  DBHOST : host name where database is running (default is localhost)
-  DBPORT : port database is listening on (default is 5432)
-  DBNAME : name of database you want to update
-  DBUSER : user in postgres you'll be executing the commands as
-  DBPASS : password for the user
+  PGHOST     : host name where database is running (default is localhost)
+  PGPORT     : port database is listening on (default is 5432)
+  PGDATABASE : name of database you want to update
+  PGUSER     : user in postgres you'll be executing the commands as
+  PGPASSWORD : password for the user
 
 Program flags are:
   -f     : required. file path to the SQL
