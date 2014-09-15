@@ -12,14 +12,14 @@ import "github.com/joncrlsn/fileutil"
 import "github.com/joncrlsn/misc"
 
 // End of Statement regex
-var eosRegex *regexp.Regexp = regexp.MustCompile(`;\s*$|;\s*--.*$`)
-var inReader *bufio.Reader = bufio.NewReader(os.Stdin)
+var eosRegex = regexp.MustCompile(`;\s*$|;\s*--.*$`)
+var inReader = bufio.NewReader(os.Stdin)
 
 // Executes a file of SQL statements one statement at a time, stopping everything
 // if one of them has an error
 func main() {
 
-    // -f (filename) is a required program argument
+	// -f (filename) is a required program argument
 	var fileName string
 	flag.StringVar(&fileName, "f", "", "path of the SQL file to run")
 	dbInfo := pgutil.DbInfo{}
@@ -27,7 +27,7 @@ func main() {
 	dbInfo.Populate()
 
 	if len(fileName) == 0 {
-        fmt.Fprintln(os.Stderr, "Missing required filename argument (-f)")
+		fmt.Fprintln(os.Stderr, "Missing required filename argument (-f)")
 		usage()
 	}
 
@@ -37,38 +37,38 @@ func main() {
 		os.Exit(2)
 	}
 
-    runFile(fileName, &dbInfo)
+	runFile(fileName, &dbInfo)
 }
 
 // Reads the file and runs the SQL statements one by one
 func runFile(fileName string, dbInfo *pgutil.DbInfo) {
-    // Open connection to the database
-    db, err := dbInfo.Open()
-    check("opening database", err)
+	// Open connection to the database
+	db, err := dbInfo.Open()
+	check("opening database", err)
 
-    // Read each statement from the file one at a time and execute them
+	// Read each statement from the file one at a time and execute them
 	sqlChan := sqlStatements(fileName)
 	for sql := range sqlChan {
 		// Execute SQL.  If not successful, stop and ask user
 		// whether or not we should continue
 		fmt.Println("\n================================")
 		log.Print("Executing SQL: ", sql)
-        result, err := db.Exec(sql)
+		result, err := db.Exec(sql)
 
-        // If there was an error, ask user whether or not we should continue
+		// If there was an error, ask user whether or not we should continue
 		if err != nil {
-            fmt.Fprintln(os.Stderr, "Error: ", err)
-            if misc.PromptYesNo("SQL failed!  Do you want to continue?", false)  {
-                continue
-            }
-            os.Exit(1)
+			fmt.Fprintln(os.Stderr, "Error: ", err)
+			if misc.PromptYesNo("SQL failed!  Do you want to continue?", false) {
+				continue
+			}
+			os.Exit(1)
 		}
 
-        rowCnt, err := result.RowsAffected()
-        check("getting rows affected count", err)
-        log.Printf("Rows affected: %d\n", rowCnt)
+		rowCnt, err := result.RowsAffected()
+		check("getting rows affected count", err)
+		log.Printf("Rows affected: %d\n", rowCnt)
 	}
-    log.Println("Done!")
+	log.Println("Done!")
 }
 
 /*
@@ -113,7 +113,7 @@ func sqlStatements(fileName string) <-chan string {
 
 func usage() {
 	fmt.Fprintf(os.Stderr, "usage: %s -f <sqlFileName> [-host <string>] [-port <int>] [-db <string>] [-user <string>] [-pw <password>] \n", os.Args[0])
-    fmt.Fprintln(os.Stderr, `
+	fmt.Fprintln(os.Stderr, `
 Database connection properties can be specified in two ways:
   * Environment variables
   * Program flags (override environment variables)
@@ -137,7 +137,7 @@ Program flags are:
 }
 
 func check(msg string, err error) {
-    if err != nil {
-        log.Fatal("Error " + msg, err)
-    }
+	if err != nil {
+		log.Fatal("Error "+msg, err)
+	}
 }

@@ -13,7 +13,7 @@ const expectedSqlStatements int = 3
 // Creates the testing file we'll be using
 func init() {
 	//testFileName = fileutil.TempFileName("sqlrun.", ".sql")
-    testFileName = "temp.sql"
+	testFileName = "temp.sql"
 	lines := strings.Split(`
 
 INSERT INTO alert (id, name) VALUES (1, 'Your zipper is open');
@@ -47,11 +47,11 @@ func Test_StatementGrouping(t *testing.T) {
 
 // Runs the file against a test database
 func Test_runFile(t *testing.T) {
-    dbInfo := pgutil.DbInfo{}
-    dbInfo.DbName = "dev-cpc"
-    dbInfo.DbUser = "c42"
-    dbInfo.DbPass = ""
-    dbInfo.DbHost = "localhost"
-    dbInfo.DbOptions = "sslmode=disable"
-    runFile(testFileName, &dbInfo)
+	dbInfo := pgutil.DbInfo{}
+	dbInfo.DbName = "dev-cpc"
+	dbInfo.DbUser = "c42"
+	dbInfo.DbPass = ""
+	dbInfo.DbHost = "localhost"
+	dbInfo.DbOptions = "sslmode=disable"
+	runFile(testFileName, &dbInfo)
 }
