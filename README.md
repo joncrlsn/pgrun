@@ -1,7 +1,7 @@
 pgrun
 =====
 
-Written in GoLang. Executes each statement in a SQL file against a PostgreSQL database, stopping when any statement has an error.Contrast this behavior with the standard PostgreSQL psql executable which takes a -f argument, but continues to run even after a command fails.
+Written in GoLang. Executes each statement in a SQL file against a PostgreSQL database, stopping when any statement has an error. Contrast this behavior with the standard PostgreSQL psql executable which takes a -f argument, but continues to run even after a command fails.
 
 A couple of binaries to save you the effort:
 [Mac](https://github.com/joncrlsn/pgrun/raw/master/bin-osx/pgrun "OSX version")  [Linux](https://github.com/joncrlsn/pgrun/raw/master/bin-linux/pgrun "Linux version")
@@ -12,14 +12,25 @@ Database connection properties can be specified in two ways:
 
 If you have a ~/.pgpass file, pgrun will attempt to pull password from there.
 
-Environment variables are:
-  * PGHOST     : host name where database is running (default is localhost)
-  * PGPORT     : port database is listening on (default is 5432)
-  * PGDATABASE : database you want to update
-  * DBUSER     : user in postgres you'll be executing the commands as
-  * DBPASSWORD : password for the user
+#### Database connection information can be specified in up to three ways:
 
-Program flags (these match the psql arguments):
+  * Environment variables (keeps you from typing them in often)
+  * Program flags (overrides environment variables.  See above)
+  * ~/.pgpass file (may contain password for the previously specified user)
+  * Note that if password is not specified, you will be prompted.
+
+#### Optional database environment variables
+
+Name       | Explanation
+---------  | -----------
+PGHOST     | host name where database is running (matches psql)
+PGPORT     | port database is listening on (default is 5432) (matches psql)
+PGDATABASE | name of database you want to copy (matches psql)
+PGUSER     | user in postgres you'll be executing the queries as (matches psql)
+PGPASSWORD | password for the user (matches psql)
+PGOPTION   | one or more database options (like sslmode=disable)
+
+#### Program flags (these match the psql arguments):
   * -f  : (required) file path to the SQL to run
   * -U  : user in postgres to execute the commands
   * -h  : host name where database is running -- default is localhost

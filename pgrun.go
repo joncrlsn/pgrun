@@ -125,6 +125,7 @@ Environment variables are:
   PGDATABASE : name of database you want to update
   PGUSER     : user in postgres you'll be executing the commands as
   PGPASSWORD : password for the user
+  PGOPTION   : postgresql options (like sslmode=disable)
 
 Program flags are:
   -f     : required. file path to the SQL
