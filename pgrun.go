@@ -23,7 +23,6 @@ func main() {
 	var fileName string
 	flag.StringVar(&fileName, "f", "", "path of the SQL file to run")
 	dbInfo := pgutil.DbInfo{}
-	dbInfo.DbOptions = "sslmode=disable"
 	dbInfo.Populate()
 
 	if len(fileName) == 0 {
@@ -53,20 +52,30 @@ func runFile(fileName string, dbInfo *pgutil.DbInfo) {
 		// whether or not we should continue
 		fmt.Println("\n================================")
 		log.Print("Executing SQL: ", sql)
-		result, err := db.Exec(sql)
 
-		// If there was an error, ask user whether or not we should continue
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error: ", err)
-			if misc.PromptYesNo("SQL failed!  Do you want to continue?", false) {
-				continue
+		runSql := true // Let's us loop for rerunning error
+		for runSql {
+			result, err := db.Exec(sql)
+
+			// If there was an error, ask user whether or not we should continue
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "Error: ", err)
+				action := misc.ChooseOne("Continue, Quit, or Redo?  Enter c, q, or r: ", "c", "q", "r")
+				// runSql has to be true here
+				if action == "c" {
+					runSql = false
+				}
+				if action == "q" {
+					os.Exit(1)
+				}
+			} else {
+				runSql = false
+				rowCnt, err := result.RowsAffected()
+				check("getting rows affected count", err)
+				log.Printf("Rows affected: %d\n", rowCnt)
 			}
-			os.Exit(1)
 		}
 
-		rowCnt, err := result.RowsAffected()
-		check("getting rows affected count", err)
-		log.Printf("Rows affected: %d\n", rowCnt)
 	}
 	log.Println("Done!")
 }
@@ -112,7 +121,7 @@ func sqlStatements(fileName string) <-chan string {
 }
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage: %s -f <sqlFileName> [-host <string>] [-port <int>] [-db <string>] [-user <string>] [-pw <password>] \n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "usage: %s -f <sqlFileName> [-h <string>] [-p <int>] [-d <string>] [-U <string>] [-pw <password>] \n", os.Args[0])
 	fmt.Fprintln(os.Stderr, `
 Database connection properties can be specified in two ways:
   * Environment variables
@@ -133,7 +142,8 @@ Program flags are:
   -h     : host name where database is running--default is localhost (matches psql flag)
   -p     : port.  defaults to 5432 (matches psql flag)
   -d     : database name (matches psql flag)
-  -pw    : password for the postgres user`)
+  -pw    : password for the postgres user
+  -o     : postgresql options (like sslmode=disable)`)
 	os.Exit(2)
 }
 
