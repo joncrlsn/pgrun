@@ -1,11 +1,11 @@
 pgrun
 =====
 
-pgrun, intended to replace psql for running sql files, uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as using the standard postgres environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
+pgrun is a superior replacement of psql for running sql files against a PostgreSQL database.  It uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as using the standard postgreSQL environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
 
 Written in GoLang, pgrun executes each statement in a SQL file against a PostgreSQL database, stopping to ask you what you want to do when any statement has an error (you can Continue, Quit, or Redo the statement). Contrast this behavior with the standard psql command (which also takes a -f argument), but continues to run even after a statement fails.  
 
-A couple of binaries to save you the effort:
+Here are a couple of binaries to save you the effort:
 [Mac](https://github.com/joncrlsn/pgrun/raw/master/bin-osx/pgrun "OSX version")  [Linux](https://github.com/joncrlsn/pgrun/raw/master/bin-linux/pgrun "Linux version")
 
 Database connection properties can be specified in two ways:
