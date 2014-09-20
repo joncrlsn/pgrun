@@ -1,7 +1,9 @@
 pgrun
 =====
 
-Written in GoLang. Executes each statement in a SQL file against a PostgreSQL database, stopping when any statement has an error. Contrast this behavior with the standard PostgreSQL psql executable which takes a -f argument, but continues to run even after a command fails.
+pgrun, intended to replace psql for running sql files, uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as using the standard postgres environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
+
+Written in GoLang, pgrun executes each statement in a SQL file against a PostgreSQL database, stopping to ask you what you want to do when any statement has an error (you can Continue, Quit, or Redo the statement). Contrast this behavior with the standard psql command (which also takes a -f argument), but continues to run even after a statement fails.  
 
 A couple of binaries to save you the effort:
 [Mac](https://github.com/joncrlsn/pgrun/raw/master/bin-osx/pgrun "OSX version")  [Linux](https://github.com/joncrlsn/pgrun/raw/master/bin-linux/pgrun "Linux version")
@@ -19,7 +21,7 @@ If you have a ~/.pgpass file, pgrun will attempt to pull password from there.
   * ~/.pgpass file (may contain password for the previously specified user)
   * Note that if password is not specified, you will be prompted.
 
-#### Optional database environment variables
+#### Optional database environment variables (these match the postgres standard)
 
 Name       | Explanation
 ---------  | -----------
