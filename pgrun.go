@@ -50,7 +50,7 @@ func runFile(fileName string, dbInfo *pgutil.DbInfo) {
 	for sql := range sqlChan {
 		// Execute SQL.  If not successful, stop and ask user
 		// whether or not we should continue
-		fmt.Println("\n================================")
+		fmt.Println("\n---")
 		log.Print("Executing SQL: ", sql)
 
 		runSql := true // Let's us loop for rerunning error
