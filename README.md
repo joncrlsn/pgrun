@@ -1,12 +1,23 @@
-pgrun
-=====
+# pgrun - a better way to run SQL against PostgreSQL
 
-pgrun is a superior replacement of psql for running sql files against a PostgreSQL database.  It uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as using the standard postgreSQL environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
+pgrun is (IMHO) a superior replacement of psql for running sql files against a PostgreSQL database.  It uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as using the standard postgreSQL environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
 
-Written in GoLang, pgrun executes each statement in a SQL file against a PostgreSQL database, stopping to ask you what you want to do when any statement has an error (you can Continue, Quit, or Redo the statement). Contrast this behavior with the standard psql command (which also takes a -f argument), but continues to run even after a statement fails.  
+Written in GoLang, pgrun executes each statement in a SQL file against a PostgreSQL database, stopping to ask you what you want to do when any statement has an error (you can Continue, Quit, or Redo the statement). Contrast this behavior with the standard psql command (which also takes a -f argument), but continues to run even after a statement fails.
 
-Here are a couple of binaries to save you the effort:
-[Mac](https://github.com/joncrlsn/pgrun/raw/master/bin-osx/pgrun "OSX version")  [Linux](https://github.com/joncrlsn/pgrun/raw/master/bin-linux/pgrun "Linux version")
+Suggestions to make this more useful and "idiomatic Go" will be appreciated.
+
+### download 
+[osx64](https://github.com/joncrlsn/pgrun/raw/master/bin-osx64/pgrun "OSX 64-bit version")
+[osx32](https://github.com/joncrlsn/pgrun/raw/master/bin-osx32/pgrun "OSX version")
+[linux64](https://github.com/joncrlsn/pgrun/raw/master/bin-linux64/pgrun "Linux 64-bit version")
+[linux32](https://github.com/joncrlsn/pgrun/raw/master/bin-linux32/pgrun "Linux version")
+[win64](https://github.com/joncrlsn/pgrun/raw/master/bin-win64/pgrun.exe "Windows 64-bit version")
+[win32](https://github.com/joncrlsn/pgrun/raw/master/bin-win32/pgrun.exe "Windows version")
+
+
+### examples
+	pgcp -U dbuser -h 10.10.41.55 -d userdb -f obfuscateUsers.sql
+	PGUSER=dbuser PGHOST=10.10.41.55 PGDATABASE=userdb pgcp -f obfuscateUsers.sql
 
 Database connection properties can be specified in two ways:
   * Environment variables
@@ -14,14 +25,14 @@ Database connection properties can be specified in two ways:
 
 If you have a ~/.pgpass file, pgrun will attempt to pull password from there.
 
-#### Database connection information can be specified in up to three ways:
+#### database connection information can be specified in up to three ways:
 
   * Environment variables (keeps you from typing them in often)
   * Program flags (overrides environment variables.  See above)
   * ~/.pgpass file (may contain password for the previously specified user)
   * Note that if password is not specified, you will be prompted.
 
-#### Optional database environment variables (these match the postgres standard)
+#### optional database environment variables (these match the postgres standard)
 
 Name       | Explanation
 ---------  | -----------
@@ -32,7 +43,7 @@ PGUSER     | user in postgres you'll be executing the queries as (matches psql)
 PGPASSWORD | password for the user (matches psql)
 PGOPTION   | one or more database options (like sslmode=disable)
 
-#### Program flags (these match the psql arguments):
+#### program flags (these match the psql arguments):
   * -f  : (required) file path to the SQL to run
   * -U  : user in postgres to execute the commands
   * -h  : host name where database is running -- default is localhost
