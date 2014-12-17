@@ -4,7 +4,7 @@ import "fmt"
 import "os"
 import "strings"
 import "regexp"
-import "flag"
+import flag "github.com/ogier/pflag"
 import "bufio"
 import "log"
 import "github.com/joncrlsn/pgutil"
@@ -14,6 +14,7 @@ import "github.com/joncrlsn/misc"
 // End of Statement regex
 var eosRegex = regexp.MustCompile(`;\s*$|;\s*--.*$`)
 var inReader = bufio.NewReader(os.Stdin)
+var version = "1.0.6"
 
 // Executes a file of SQL statements one statement at a time, stopping everything
 // if one of them has an error
@@ -21,9 +22,22 @@ func main() {
 
 	// -f (filename) is a required program argument
 	var fileName string
+	var verFlag bool
+	var helpFlag bool
 	flag.StringVar(&fileName, "f", "", "path of the SQL file to run")
+	flag.BoolVarP(&verFlag, "version", "V", false, "Displays version information")
+	flag.BoolVarP(&helpFlag, "help", "?", false, "Displays usage help")
 	dbInfo := pgutil.DbInfo{}
 	dbInfo.Populate()
+
+	if verFlag {
+		fmt.Fprintf(os.Stderr, "%s - version %s\n", os.Args[0], version)
+		os.Exit(0)
+	}
+
+	if helpFlag {
+		usage()
+	}
 
 	if len(fileName) == 0 {
 		fmt.Fprintln(os.Stderr, "Missing required filename argument (-f)")
@@ -88,7 +102,8 @@ func sqlStatements(fileName string) <-chan string {
 	statementChan := make(chan string)
 
 	go func() {
-		lineChan := fileutil.ReadLinesChannel(fileName)
+		lineChan, err := fileutil.ReadLinesChannel(fileName)
+		check("reading file", err)
 
 		// TODO: Convert this to a string builder
 		statement := ""
@@ -121,7 +136,7 @@ func sqlStatements(fileName string) <-chan string {
 }
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage: %s -f <sqlFileName> [-h <string>] [-p <int>] [-d <string>] [-U <string>] [-pw <password>] \n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "usage: %s -f <sqlFileName> [-U <user>] [-h <host>] [-p <port>] [-d <dbname>] ... \n", os.Args[0])
 	fmt.Fprintln(os.Stderr, `
 Database connection properties can be specified in two ways:
   * Environment variables
@@ -137,13 +152,18 @@ Environment variables are:
   PGOPTION   : postgresql options (like sslmode=disable)
 
 Program flags are:
-  -f     : required. file path to the SQL
-  -U     : user in postgres to execute the commands (matches psql flag)
-  -h     : host name where database is running--default is localhost (matches psql flag)
-  -p     : port.  defaults to 5432 (matches psql flag)
-  -d     : database name (matches psql flag)
-  -pw    : password for the postgres user
-  -o     : postgresql options (like sslmode=disable)`)
+  -f, --filename     : required. file path to the SQL
+  -V, --version      : prints the version of pgrun being run
+  -?, --help         : prints a summary of the commands accepted by pgrun
+  -U, --user         : user in postgres to execute the commands
+  -h, --host         : host name where database is running (default is localhost)
+  -p, --port         : port database is listening on (default is 5432)
+  -d, --dbname       : database name
+  -O, --options      : postgresql connection options (like sslmode=disable)
+  -w, --no-password  : Never issue a password prompt
+  -W, --password     : Force a password prompt
+`)
+
 	os.Exit(2)
 }
 
