@@ -16,8 +16,8 @@ Suggestions and modifications to make this more useful and "idiomatic Go" will b
 
 
 ### examples
-	pgcp -U dbuser -h 10.10.41.55 -d userdb -f obfuscateUsers.sql
-	PGUSER=dbuser PGHOST=10.10.41.55 PGDATABASE=userdb pgcp -f obfuscateUsers.sql
+	pgrun -U dbuser -h 10.10.41.55 -d userdb -f obfuscateUsers.sql
+	PGUSER=dbuser PGHOST=10.10.41.55 PGDATABASE=userdb pgrun -f obfuscateUsers.sql
 
 #### flags (these mostly match psql arguments):
 program flag         | Explanation
