@@ -20,14 +20,18 @@ Suggestions and modifications to make this more useful and "idiomatic Go" will b
 	PGUSER=dbuser PGHOST=10.10.41.55 PGDATABASE=userdb pgcp -f obfuscateUsers.sql
 
 #### flags (these mostly match psql arguments):
-database flag | Explanation
-------------: | -------------
-  -f          | (required) file path to the SQL to run
-  -U          | postgres user   (matches psql flag)
-  -h          | database host -- default is localhost (matches psql flag)
-  -p          | port.  defaults to 5432 (matches psql flag)
-  -d          | database name (matches psql flag)
-  -pw         | password for the postgres user<br>(if not provided then you'll be prompted)
+program flag         | Explanation
+-------------------: | -------------
+  -f, --filename     | required. file path to the SQL
+  -V, --version      | prints the version of pgrun being run
+  -?, --help         | prints a summary of the commands accepted by pgrun
+  -U, --user         | user in postgres to execute the commands
+  -h, --host         | host name where database is running (default is localhost)
+  -p, --port         | port database is listening on (default is 5432)
+  -d, --dbname       | database name
+  -O, --options      | postgresql connection options (like sslmode=disable)
+  -w, --no-password  | Never issue a password prompt
+  -W, --password     | Force a password prompt
 
 ### database connection options
 
