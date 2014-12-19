@@ -14,7 +14,7 @@ import "github.com/joncrlsn/misc"
 // End of Statement regex
 var eosRegex = regexp.MustCompile(`;\s*$|;\s*--.*$`)
 var inReader = bufio.NewReader(os.Stdin)
-var version = "1.0.6"
+var version = "1.0.7"
 
 // Executes a file of SQL statements one statement at a time, stopping everything
 // if one of them has an error

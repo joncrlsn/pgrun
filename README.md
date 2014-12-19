@@ -1,8 +1,8 @@
 # pgrun - a better way to run SQL against PostgreSQL
 
-pgrun is (IMHO) a superior replacement of psql for running sql files against a PostgreSQL database.  It uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as using the standard postgreSQL environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
+pgrun is (IMHO) a superior replacement of psql for running sql files against a PostgreSQL database when you want to be notified that an update or alter failed before continuing on.  It uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as using the standard postgreSQL environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
 
-Written in GoLang, pgrun executes each statement in a SQL file against a PostgreSQL database, stopping to ask you what you want to do when any statement has an error (you can Continue, Quit, or Redo the statement). Contrast this behavior with the standard psql command (which also takes a -f argument), but continues to run even after a statement fails.
+Written in GoLang, pgrun executes each statement from the given SQL file against a PostgreSQL database, stopping to ask you what you want to do when any statement has an error (you can Continue, Quit, or Redo the statement). Contrast this behavior with the standard psql command (which also takes a -f argument), but continues to run even after a statement fails.
 
 Suggestions and modifications to make this more useful and "idiomatic Go" will be appreciated.
 
@@ -19,8 +19,8 @@ Suggestions and modifications to make this more useful and "idiomatic Go" will b
 	pgrun -U dbuser -h 10.10.41.55 -d userdb -f obfuscateUsers.sql
 	PGUSER=dbuser PGHOST=10.10.41.55 PGDATABASE=userdb pgrun -f obfuscateUsers.sql
 
-#### flags (these mostly match psql arguments):
-program flag         | Explanation
+#### flags/options (these mostly match psql arguments):
+program flag/option  | explanation
 -------------------: | -------------
   -f, --filename     | required. file path to the SQL
   -V, --version      | prints the version of pgrun being run
@@ -42,7 +42,7 @@ program flag         | Explanation
 
 ### optional database environment variables
 
-Name       | Explanation
+name       | explanation
 ---------  | -----------
 PGHOST     | host name where database is running (matches psql)
 PGPORT     | port database is listening on (default is 5432) (matches psql)
@@ -50,3 +50,9 @@ PGDATABASE | name of database you want to copy (matches psql)
 PGUSER     | user in postgres you'll be executing the queries as (matches psql)
 PGPASSWORD | password for the user (matches psql)
 PGOPTION   | one or more database options (like sslmode=disable)
+
+### todo
+1. ~~Fix bug where Ctrl-C in the password entry field messes up the console.~~ Fixed in version 1.0.7
+2. Allow editing of a failed SQL statement before rerunning.
+3. Improve the accuracy of parsing ~/.pgpass
+4. Add database options that may be requested by others (that fit with the purpose of this tool).
