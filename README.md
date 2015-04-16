@@ -4,8 +4,6 @@ pgrun is (IMHO) a superior replacement of psql for running sql files against a P
 
 Written in GoLang, pgrun executes each statement from the given SQL file against a PostgreSQL database, stopping to ask you what you want to do when any statement has an error (you can Continue, Quit, or Redo the statement). Contrast this behavior with the standard psql command (which also takes a -f argument), but continues to run even after a statement fails.
 
-Suggestions and modifications to make this more useful and "idiomatic Go" will be appreciated.
-
 ### download 
 [osx64](https://github.com/joncrlsn/pgrun/raw/master/bin-osx64/pgrun "OSX 64-bit version")
 [osx32](https://github.com/joncrlsn/pgrun/raw/master/bin-osx32/pgrun "OSX version")
@@ -30,8 +28,8 @@ program flag/option  | explanation
   -p, --port         | port database is listening on (default is 5432)
   -d, --dbname       | database name
   -O, --options      | postgresql connection options (like sslmode=disable)
-  -w, --no-password  | Never issue a password prompt
-  -W, --password     | Force a password prompt
+  -w, --no-password  | Never issue a db password prompt.  Fail if none found.
+  -W, --password     | Force a db password prompt
 
 ### database connection options
 
@@ -53,6 +51,7 @@ PGOPTION   | one or more database options (like sslmode=disable)
 
 ### todo
 1. ~~Fix bug where Ctrl-C in the password entry field messes up the console.~~ Fixed in version 1.0.7
+1. ~~Fix -? and -V flags that are not working.~~ Fixed in version 1.0.8
 2. Allow editing of a failed SQL statement before rerunning.
 3. Improve the accuracy of parsing ~/.pgpass
 4. Add database options that may be requested by others (that fit with the purpose of this tool).

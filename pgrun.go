@@ -14,43 +14,41 @@ import "github.com/joncrlsn/misc"
 // End of Statement regex
 var eosRegex = regexp.MustCompile(`;\s*$|;\s*--.*$`)
 var inReader = bufio.NewReader(os.Stdin)
-var version = "1.0.7"
+var version = "1.0.8"
 
 // Executes a file of SQL statements one statement at a time, stopping everything
 // if one of them has an error
 func main() {
 
 	// -f (filename) is a required program argument
-	var fileName string
-	var verFlag bool
-	var helpFlag bool
-	flag.StringVar(&fileName, "f", "", "path of the SQL file to run")
-	flag.BoolVarP(&verFlag, "version", "V", false, "Displays version information")
-	flag.BoolVarP(&helpFlag, "help", "?", false, "Displays usage help")
+	var fileName = flag.StringP("file", "f", "", "path of the SQL file to run")
 	dbInfo := pgutil.DbInfo{}
-	dbInfo.Populate()
+	verFlag, helpFlag := dbInfo.Populate()
 
 	if verFlag {
-		fmt.Fprintf(os.Stderr, "%s - version %s\n", os.Args[0], version)
-		os.Exit(0)
+		fmt.Fprintf(os.Stderr, "%s version %s\n", os.Args[0], version)
+		fmt.Fprintln(os.Stderr, "Copyright (c) 2015 Jon Carlson.  All rights reserved.")
+		fmt.Fprintln(os.Stderr, "Use of this source code is governed by the MIT license")
+		fmt.Fprintln(os.Stderr, "that can be found here: http://opensource.org/licenses/MIT")
+		os.Exit(1)
 	}
 
 	if helpFlag {
 		usage()
 	}
 
-	if len(fileName) == 0 {
+	if len(*fileName) == 0 {
 		fmt.Fprintln(os.Stderr, "Missing required filename argument (-f)")
 		usage()
 	}
 
-	exists, _ := fileutil.Exists(fileName)
+	exists, _ := fileutil.Exists(*fileName)
 	if !exists {
-		fmt.Fprintf(os.Stderr, "File does not exist: %s\n", fileName)
+		fmt.Fprintf(os.Stderr, "File does not exist: %s\n", *fileName)
 		os.Exit(2)
 	}
 
-	runFile(fileName, &dbInfo)
+	runFile(*fileName, &dbInfo)
 }
 
 // Reads the file and runs the SQL statements one by one
