@@ -1,8 +1,8 @@
-# pgrun - a better way to run SQL against PostgreSQL
+# pgrun - a customized psql clone
 
-pgrun is a custom replacement of psql for running sql files against a PostgreSQL database when you want to be notified that an update or alter failed before continuing on.  It uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as using the standard postgreSQL environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
+pgrun is a customized replacement of psql for running sql files against a PostgreSQL database when you want to be notified that an update or alter failed before continuing on.  It uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as the standard postgreSQL environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
 
-Written in GoLang, pgrun executes each statement from the given SQL file against a PostgreSQL database, stopping to ask you what you want to do when any statement has an error (you can Continue, Quit, or Redo the statement). Contrast this behavior with the standard psql command (which also takes a -f argument), but continues to run even after a statement fails.
+Written in GoLang, pgrun executes each statement from the given SQL file against a PostgreSQL database, stopping on error to ask you what you want to do (you can Continue, Quit, or Redo the statement). Contrast this behavior with the standard psql command which is all or nothing (continue if any fail, or quit if any fail)
 
 ### download 
 [osx](https://github.com/joncrlsn/pgrun/raw/master/bin-osx/pgrun "OSX version")
