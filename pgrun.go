@@ -1,20 +1,42 @@
 package main
 
-import "fmt"
-import "os"
-import "strings"
-import "regexp"
-import flag "github.com/ogier/pflag"
-import "bufio"
-import "log"
-import "github.com/joncrlsn/pgutil"
-import "github.com/joncrlsn/fileutil"
-import "github.com/joncrlsn/misc"
+//
+// Copyright (c) 2016 Jon Carlson.  All rights reserved.
+// Use of this source code is governed by the MIT
+// license that can be found in the LICENSE file.
+//
 
-// End of Statement regex
-var eosRegex = regexp.MustCompile(`;\s*$|;\s*--.*$`)
-var inReader = bufio.NewReader(os.Stdin)
-var version = "1.0.8"
+import (
+	"bufio"
+	"fmt"
+	"github.com/joncrlsn/fileutil"
+	"github.com/joncrlsn/misc"
+	"github.com/joncrlsn/pgutil"
+	flag "github.com/ogier/pflag"
+	"log"
+	"os"
+	"regexp"
+	"strings"
+)
+
+const (
+	version = "1.0.9"
+)
+
+var (
+
+	// There are times when we need to mark the statement beginning and end
+	// with something other than a semi-colon.  For example, functions can
+	// have semi-colons at the end of a line without it signifying the end
+	// of the statement.
+	stmtBeginRegex = regexp.MustCompile(`^\s*--\s*STATEMENT-BEGIN\s*$`)
+	stmtEndRegex   = regexp.MustCompile(`^\s*--\s*STATEMENT-END\s*$`)
+
+	// eosRegex is End of Statement regex
+	eosRegex = regexp.MustCompile(`;\s*$|;\s*--.*$`)
+
+	inReader = bufio.NewReader(os.Stdin)
+)
 
 // Executes a file of SQL statements one statement at a time, stopping everything
 // if one of them has an error
@@ -27,7 +49,7 @@ func main() {
 
 	if verFlag {
 		fmt.Fprintf(os.Stderr, "%s version %s\n", os.Args[0], version)
-		fmt.Fprintln(os.Stderr, "Copyright (c) 2015 Jon Carlson.  All rights reserved.")
+		fmt.Fprintln(os.Stderr, "Copyright (c) 2016 Jon Carlson.  All rights reserved.")
 		fmt.Fprintln(os.Stderr, "Use of this source code is governed by the MIT license")
 		fmt.Fprintln(os.Stderr, "that can be found here: http://opensource.org/licenses/MIT")
 		os.Exit(1)
@@ -93,8 +115,12 @@ func runFile(fileName string, dbInfo *pgutil.DbInfo) {
 }
 
 /*
- * Reads and returns (via channel) SQL statements from the given file.
- * SQL statements must end with a semi-colon
+ * sqlStatements chunks SQL lines from the given file into complete statements and returns
+ * them a statement at a time (via a channel).  Most SQL statements end with a semi-colon.
+ * However, some statements (like CREATE FUNCTION) are tricky because they can have statements
+ * inside the main statement.  So this also looks for begin/end notations:
+ * -- STATEMENT-BEGIN
+ * -- STATEMENT-END
  */
 func sqlStatements(fileName string) <-chan string {
 	statementChan := make(chan string)
@@ -103,25 +129,49 @@ func sqlStatements(fileName string) <-chan string {
 		lineChan, err := fileutil.ReadLinesChannel(fileName)
 		check("reading file", err)
 
+		// delimitedStatement is true when we are in a specially delimited statement:
+		// -- STATEMENT-BEGIN
+		// -- STATEMENT-END
+		var delimitedStatement bool = false
+
 		// TODO: Convert this to a string builder
 		statement := ""
 		for line := range lineChan {
 			//fmt.Printf("  Line: %s\n", line)
 
-			// ignore blank or empty lines
+			// Remove whitespace from the beginning and the end of the line
 			line = strings.TrimSpace(line)
+
+			// Ignore empty line
 			if len(line) == 0 {
 				continue
 			}
+
+			if stmtBeginRegex.MatchString(line) {
+				delimitedStatement = true
+				statement = "" // lose the current line
+				continue
+			}
+
+			if stmtEndRegex.MatchString(line) {
+				delimitedStatement = false
+				if len(statement) > 0 {
+					statementChan <- statement
+					statement = "" // lose the current line
+				}
+				continue
+			}
+
+			// ignore lines that are fully commented out
 			if strings.HasPrefix(line, "--") {
 				continue
 			}
 
 			statement += line + "\n"
 
-			// look for line ending with just a semi-colon
-			// or a semi-colon with a SQL comment following
-			if eosRegex.MatchString(line) {
+			// When we are not in a specially delimited statement, a line
+			// ending with a semi-colon denotes the end of the statement.
+			if !delimitedStatement && eosRegex.MatchString(line) {
 				statementChan <- statement
 				statement = ""
 			}

@@ -1,16 +1,13 @@
 # pgrun - a better way to run SQL against PostgreSQL
 
-pgrun is (IMHO) a superior replacement of psql for running sql files against a PostgreSQL database when you want to be notified that an update or alter failed before continuing on.  It uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as using the standard postgreSQL environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
+pgrun is a custom replacement of psql for running sql files against a PostgreSQL database when you want to be notified that an update or alter failed before continuing on.  It uses mostly the same argument flags as psql (-U, -h, -p, -d, -f) as well as using the standard postgreSQL environment variables like PGHOST, PGPORT, PGDATABASE, and PGPASSWORD.
 
 Written in GoLang, pgrun executes each statement from the given SQL file against a PostgreSQL database, stopping to ask you what you want to do when any statement has an error (you can Continue, Quit, or Redo the statement). Contrast this behavior with the standard psql command (which also takes a -f argument), but continues to run even after a statement fails.
 
 ### download 
-[osx64](https://github.com/joncrlsn/pgrun/raw/master/bin-osx64/pgrun "OSX 64-bit version")
-[osx32](https://github.com/joncrlsn/pgrun/raw/master/bin-osx32/pgrun "OSX version")
-[linux64](https://github.com/joncrlsn/pgrun/raw/master/bin-linux64/pgrun "Linux 64-bit version")
-[linux32](https://github.com/joncrlsn/pgrun/raw/master/bin-linux32/pgrun "Linux version")
-[win64](https://github.com/joncrlsn/pgrun/raw/master/bin-win64/pgrun.exe "Windows 64-bit version")
-[win32](https://github.com/joncrlsn/pgrun/raw/master/bin-win32/pgrun.exe "Windows version")
+[osx](https://github.com/joncrlsn/pgrun/raw/master/bin-osx/pgrun "OSX version")
+[linux](https://github.com/joncrlsn/pgrun/raw/master/bin-linux/pgrun "Linux version")
+[win](https://github.com/joncrlsn/pgrun/raw/master/bin-win/pgrun.exe "Windows version")
 
 
 ### examples
@@ -52,6 +49,5 @@ PGOPTION   | one or more database options (like sslmode=disable)
 ### todo
 1. ~~Fix bug where Ctrl-C in the password entry field messes up the console.~~ Fixed in version 1.0.7
 1. ~~Fix -? and -V flags that are not working.~~ Fixed in version 1.0.8
-2. Allow editing of a failed SQL statement before rerunning.
-3. Improve the accuracy of parsing ~/.pgpass
-4. Add database options that may be requested by others (that fit with the purpose of this tool).
+1. Allow editing of a failed SQL statement before rerunning.
+1. Improve the accuracy of parsing ~/.pgpass
