@@ -16,11 +16,11 @@ else
     echo "Skipping osx.  No bin-osx directory."
 fi
 
-if [[ -d bin-bin-arm64 ]]; then
-    GOOS=darwin GOARCH=arm64 go build -o bin-bin-arm64/${appname}
+if [[ -d bin-arm64 ]]; then
+    GOOS=darwin GOARCH=arm64 go build -o bin-arm64/${appname}
     echo "Built bin-arm64."
 else
-    echo "Skipping bin-arm64.  No bin-bin-arm64 directory."
+    echo "Skipping bin-arm64.  No bin-arm64 directory."
 fi
 
 if [[ -d bin-win ]]; then
