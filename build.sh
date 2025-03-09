@@ -3,7 +3,7 @@
 appname=pgrun
 
 if [[ -d bin-linux ]]; then
-    GOOS=linux GOARCH=386 go build -o bin-linux32/${appname}
+    GOOS=linux GOARCH=386 go build -o bin-linux/${appname}
     echo "Built linux."
 else
     echo "Skipping linux.  No bin-linux directory."
@@ -14,6 +14,13 @@ if [[ -d bin-osx ]]; then
     echo "Built osx."
 else
     echo "Skipping osx.  No bin-osx directory."
+fi
+
+if [[ -d bin-arm64 ]]; then
+    GOOS=darwin GOARCH=arm64 go build -o bin-arm64/${appname}
+    echo "Built bin-arm64."
+else
+    echo "Skipping bin-arm64.  No bin-arm64 directory."
 fi
 
 if [[ -d bin-win ]]; then

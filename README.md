@@ -8,6 +8,7 @@ Written in GoLang, pgrun executes each statement from the given SQL file against
 [osx](https://github.com/joncrlsn/pgrun/raw/master/bin-osx/pgrun "OSX version")
 [linux](https://github.com/joncrlsn/pgrun/raw/master/bin-linux/pgrun "Linux version")
 [win](https://github.com/joncrlsn/pgrun/raw/master/bin-win/pgrun.exe "Windows version")
+[arm64](https://github.com/joncrlsn/pgrun/raw/master/bin-arm64/pgrun.exe "Mac arm64 version")
 
 
 ### examples
